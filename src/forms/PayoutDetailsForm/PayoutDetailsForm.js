@@ -10,7 +10,7 @@ import { Button, ExternalLink, FieldRadioButton, FieldSelect, Form } from '../..
 import { isStripeInvalidPostalCode } from '../../util/errors';
 import * as validators from '../../util/validators';
 
-import PayoutDetailsFormCompany from './PayoutDetailsFormCompany';
+import PayoutDetailsCompanyAccount from './PayoutDetailsCompanyAccountDeprecated';
 import PayoutDetailsFormIndividual from './PayoutDetailsFormIndividual';
 import css from './PayoutDetailsForm.css';
 
@@ -157,7 +157,7 @@ const PayoutDetailsFormComponent = props => (
                   country={country}
                 />
               ) : showCompany ? (
-                <PayoutDetailsFormCompany fieldRenderProps={fieldRenderProps} country={country} />
+                <PayoutDetailsCompanyAccount fieldRenderProps={fieldRenderProps} country={country} />
               ) : null}
 
               {error}

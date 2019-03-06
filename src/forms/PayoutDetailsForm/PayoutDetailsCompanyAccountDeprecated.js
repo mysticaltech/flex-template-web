@@ -101,6 +101,7 @@ const PayoutDetailsFormCompanyComponent = ({ fieldRenderProps }) => {
             <FieldTextInput
               id="company.companyName"
               name="company.companyName"
+              className={css.companyName}
               disabled={disabled}
               type="text"
               autoComplete="company-name"
