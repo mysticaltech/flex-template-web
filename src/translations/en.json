@@ -1,4 +1,8 @@
 {
+
+  "BookingDatesForm.cleaningFee": "Cleaning fee",
+  "BookingBreakdown.cleaningFee": "Cleaning fee",
+
   "ActivityFeed.deletedListing": "deleted listing",
   "ActivityFeed.leaveAReview": "Leave a review for { displayName }.",
   "ActivityFeed.leaveAReviewSecond": "Leave a review for { displayName } to see their review.",

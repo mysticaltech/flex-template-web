@@ -14,6 +14,8 @@ import { ModalInMobile, Button } from '../../components';
 import { BookingDatesForm } from '../../forms';
 
 import css from './BookingPanel.css';
+import { types as sdkTypes } from '../../util/sdkLoader';
+const { Money } = sdkTypes;
 
 // This defines when ModalInMobile shows content as Modal
 const MODAL_BREAKPOINT = 1023;
@@ -68,6 +70,22 @@ const BookingPanel = props => {
     intl,
   } = props;
 
+  const cleaningFeeData = listing.attributes.publicData.cleaningFee;
+  const { amount: cleaningAmount, currency: cleaningCurrency } = cleaningFeeData || {};
+  const cleaningFee =
+    cleaningAmount && cleaningCurrency ? new Money(cleaningAmount, cleaningCurrency) : null;
+
+  const handleSubmit = values => {
+    const selectedCleaningFee =
+      values && values.additionalItems && values.additionalItems[0] === 'cleaningFee'
+        ? cleaningFee
+        : null;
+    onSubmit({
+      ...values,
+      cleaningFee: selectedCleaningFee,
+    });
+  };
+
   const price = listing.attributes.price;
   const isClosed = listing.attributes.state === LISTING_STATE_CLOSED;
   const showClosedListingHelpText = listing.id && isClosed;
@@ -118,11 +136,12 @@ const BookingPanel = props => {
             className={css.bookingForm}
             submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}
             unitType={unitType}
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit}
             price={price}
             isOwnListing={isOwnListing}
             timeSlots={timeSlots}
             fetchTimeSlotsError={fetchTimeSlotsError}
+            cleaningFee={cleaningFee}
           />
         ) : null}
       </ModalInMobile>

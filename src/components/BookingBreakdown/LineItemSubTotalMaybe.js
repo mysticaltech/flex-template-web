@@ -6,9 +6,15 @@ import {
   propTypes,
   LINE_ITEM_CUSTOMER_COMMISSION,
   LINE_ITEM_PROVIDER_COMMISSION,
+  LINE_ITEM_CLEANING_FEE,
 } from '../../util/types';
 
 import css from './BookingBreakdown.css';
+
+import { types as sdkTypes } from '../../util/sdkLoader';
+import Decimal from 'decimal.js';
+import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
+const { Money } = sdkTypes;
 
 /**
  * Checks if a transaction has a commission line-item for
@@ -40,6 +46,7 @@ const LineItemSubTotalMaybe = props => {
   // PLEASE NOTE that this assumes that the transaction doesn't have other
   // line item types than the defined unit type (e.g. week, month, year).
   const showSubTotal = txHasCommission(transaction, userRole) || refund;
+
   const unitPurchase = transaction.attributes.lineItems.find(
     item => item.code === unitType && !item.reversal
   );
@@ -48,7 +55,24 @@ const LineItemSubTotalMaybe = props => {
     throw new Error(`LineItemSubTotalMaybe: lineItem (${unitType}) missing`);
   }
 
-  const formattedSubTotal = formatMoney(intl, unitPurchase.lineTotal);
+  const cleaningFeePurchase = transaction.attributes.lineItems.find(
+    item => item.code === LINE_ITEM_CLEANING_FEE && !item.reversal
+  );
+
+  const unitNumeric = convertMoneyToNumber(unitPurchase.lineTotal);
+  const cleaningFeeNumeric = cleaningFeePurchase
+    ? convertMoneyToNumber(cleaningFeePurchase.lineTotal)
+    : null;
+  const numericTotalPrice = cleaningFeeNumeric
+    ? new Decimal(unitNumeric).plus(cleaningFeeNumeric).toNumber()
+    : new Decimal(unitNumeric).toNumber();
+  const currency = unitPurchase.lineTotal.currency;
+  const subTotal = new Money(
+    convertUnitToSubUnit(numericTotalPrice, unitDivisor(currency)),
+    currency
+  );
+
+  const formattedSubTotal = formatMoney(intl, subTotal);
 
   return showSubTotal ? (
     <div className={css.lineItem}>
