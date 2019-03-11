@@ -40,12 +40,25 @@ const EditListingPricingPanel = props => {
     <FormattedMessage id="EditListingPricingPanel.createListingTitle" />
   );
 
+  const handleSubmit = values => {
+    const newValues = {
+      publicData: {
+        cleaningFee: {
+          amount: 1500,
+          currency: config.currency,
+        },
+      },
+      ...values,
+    };
+    onSubmit(newValues);
+  };
+
   const priceCurrencyValid = price instanceof Money ? price.currency === config.currency : true;
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
       className={css.form}
       initialValues={{ price }}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       onChange={onChange}
       saveActionMsg={submitButtonText}
       updated={panelUpdated}

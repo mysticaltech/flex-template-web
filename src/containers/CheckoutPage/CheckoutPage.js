@@ -42,6 +42,11 @@ import config from '../../config';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
 import css from './CheckoutPage.css';
 
+import { nightsBetween, daysBetween } from '../../util/dates';
+import { types as sdkTypes } from '../../util/sdkLoader';
+
+const { Money } = sdkTypes;
+
 const STORAGE_KEY = 'CheckoutPage';
 
 export class CheckoutPageComponent extends Component {
@@ -62,6 +67,40 @@ export class CheckoutPageComponent extends Component {
     if (window) {
       this.loadInitialData();
     }
+  }
+
+  /**
+   * Constructs a request params object that can be used when creating bookings
+   * using custom pricing.
+   * @param {} params An object that contains bookingStart, bookingEnd and listing
+   * @return a params object for custom pricing bookings
+   */
+  customPricingParams(params) {
+    const { bookingStart, bookingEnd, listing, ...rest } = params;
+    const { amount, currency } = listing.attributes.price;
+
+    const unitType = config.bookingUnitType;
+    const isNightly = unitType === LINE_ITEM_NIGHT;
+
+    const quantity = isNightly
+      ? nightsBetween(bookingStart, bookingEnd)
+      : daysBetween(bookingStart, bookingEnd);
+
+    const bookingLineItem = {
+      code: unitType,
+      unitPrice: new Money(amount, currency),
+      quantity,
+    };
+
+    const lineItems = [bookingLineItem];
+
+    return {
+      listingId: listing.id,
+      bookingStart,
+      bookingEnd,
+      lineItems,
+      ...rest,
+    };
   }
 
   /**
@@ -116,7 +155,6 @@ export class CheckoutPageComponent extends Component {
       pageData.bookingDates.bookingEnd;
 
     if (hasData) {
-      const listingId = pageData.listing.id;
       const { bookingStart, bookingEnd } = pageData.bookingDates;
 
       // Convert picked date to date that will be converted on the API as
@@ -124,14 +162,17 @@ export class CheckoutPageComponent extends Component {
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
 
+
+      const requestParams = this.customPricingParams({
+        listing,
+        bookingStart: bookingStartForAPI,
+        bookingEnd: bookingEndForAPI,
+      })
+
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
-      fetchSpeculatedTransaction({
-        listingId,
-        bookingStart: bookingStartForAPI,
-        bookingEnd: bookingEndForAPI,
-      });
+      fetchSpeculatedTransaction(requestParams);
     }
 
     this.setState({ pageData: pageData || {}, dataLoaded: true });
@@ -156,12 +197,12 @@ export class CheckoutPageComponent extends Component {
     // Create order aka transaction
     // NOTE: if unit type is line-item/units, quantity needs to be added.
     // The way to pass it to checkout page is through pageData.bookingData
-    const requestParams = {
-      listingId: this.state.pageData.listing.id,
+    const requestParams = this.customPricingParams({
+      listing: this.state.pageData.listing,
       cardToken,
       bookingStart: speculatedTransaction.booking.attributes.start,
       bookingEnd: speculatedTransaction.booking.attributes.end,
-    };
+    });
 
     const enquiredTransaction = this.state.pageData.enquiredTransaction;
 
