@@ -3,6 +3,7 @@ import { bool } from 'prop-types';
 import { compose } from 'redux';
 import { injectIntl, intlShape } from 'react-intl';
 
+import { stripeCountryConfigs } from './PayoutDetailsForm';
 import PayoutDetailsAddress from './PayoutDetailsAddress';
 import PayoutDetailsBankDetails from './PayoutDetailsBankDetails';
 import PayoutDetailsPersonalDetails from './PayoutDetailsPersonalDetails';
@@ -10,6 +11,14 @@ import PayoutDetailsPersonalDetails from './PayoutDetailsPersonalDetails';
 const PayoutDetailsFormIndividualComponent = ({ fieldRenderProps }) => {
   const { disabled, form, intl, values } = fieldRenderProps;
   const { country } = values;
+
+  const individualConfig =
+    country && stripeCountryConfigs(country).individualConfig
+      ? stripeCountryConfigs(country).individualConfig
+      : {};
+  // const showEmailField = !!individualConfig.personEmail;
+  // const showPersonalAddressField = !!individualConfig.personalAddress;
+  const showPersonalIdNumberField = !!individualConfig.personalIdNumberRequired || !!individualConfig.ssnLast4Required;
 
   return (
     <React.Fragment>
@@ -19,6 +28,8 @@ const PayoutDetailsFormIndividualComponent = ({ fieldRenderProps }) => {
         values={values}
         country={country}
         fieldId="individual"
+        accountType="individual"
+        showPersonalIdNumberField={showPersonalIdNumberField}
       />
       <PayoutDetailsAddress
         country={country}

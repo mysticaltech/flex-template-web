@@ -377,6 +377,18 @@ export const fetchCurrentUser = () => (dispatch, getState, sdk) => {
     });
 };
 
+const formatAddress = address => {
+  const { city, streetAddress, postalCode, state, province } = address;
+  const stateMaybe = state ? { state } : province ? { state: province } : {};
+
+  return {
+    city,
+    line1: streetAddress,
+    postal_code: postalCode,
+    ...stateMaybe,
+  }
+}
+
 export const createStripeAccount = payoutDetails => (dispatch, getState, sdk) => {
   if (typeof window === 'undefined' || !window.Stripe) {
     throw new Error('Stripe must be loaded for submitting PayoutPreferences');
@@ -388,122 +400,161 @@ export const createStripeAccount = payoutDetails => (dispatch, getState, sdk) =>
 
   const { accountType, country } = payoutDetails;
 
-  let payoutDetailValues;
-  if (accountType === 'company') {
-    payoutDetailValues = payoutDetails['company'];
-  } else {
-    payoutDetailValues = payoutDetails['individual'];
-  }
+  // let payoutDetailValues;
+  // if (accountType === 'company') {
+  //   payoutDetailValues = payoutDetails['company'];
+  // } else {
+  //   payoutDetailValues = payoutDetails['individual'];
+  // }
 
-  const {
-    firstName,
-    lastName,
-    birthDate,
-    address,
-    bankAccountToken,
-    personalIdNumber,
-    companyName,
-    companyTaxId,
-    personalAddress,
-    additionalOwners,
-  } = payoutDetailValues;
+  // const {
+  //   fname: firstName,
+  //   lname: lastName,
+  //   birthDate,
+  //   address,
+  //   bankAccountToken,
+  //   personalIdNumber,
+  //   companyName,
+  //   companyTaxId,
+  //   personalAddress,
+  //   additionalOwners,
+  // } = payoutDetailValues;
 
-  const hasProvince = address.province && !address.state;
+  // const hasProvince = address.province && !address.state;
 
-  const addressValue = {
-    city: address.city,
-    line1: address.streetAddress,
-    postal_code: address.postalCode,
-    state: hasProvince ? address.province : address.state ? address.state : '',
+  // const addressValue = {
+  //   city: address.city,
+  //   line1: address.streetAddress,
+  //   postal_code: address.postalCode,
+  //   state: hasProvince ? address.province : address.state ? address.state : '',
+  // };
+
+  // let personalAddressValue;
+  // if (personalAddress) {
+  //   personalAddressValue = {
+  //     city: personalAddress.city,
+  //     line1: personalAddress.streetAddress,
+  //     postal_code: personalAddress.postalCode,
+  //     state: hasProvince
+  //       ? personalAddress.province
+  //       : personalAddress.state
+  //       ? personalAddress.state
+  //       : '',
+  //   };
+  // }
+
+  // const additionalOwnersValue = additionalOwners
+  //   ? additionalOwners.map(owner => {
+  //       return {
+  //         first_name: owner.firstName,
+  //         last_name: owner.lastName,
+  //         dob: owner.birthDate,
+  //         address: {
+  //           city: owner.city,
+  //           line1: owner.streetAddress,
+  //           postal_code: owner.postalCode,
+  //           state: hasProvince ? owner.province : owner.state ? owner.state : '',
+  //         },
+  //       };
+  //     })
+  //   : [];
+
+  // const idNumber =
+  //   country === 'US' ? { ssn_last_4: personalIdNumber } : { personal_id_number: personalIdNumber };
+
+  // let params;
+
+  // // You can check which API version you are using from Stripe Dasboard -> Developers.
+  // // If you are using older version than '2019-02-19'
+  // // edit 'useDeprecatedLegalEntityWithStripe' config in the stripe-config.js
+
+  // const isNewAPI = !config.stripe.useDeprecatedLegalEntityWithStripe;
+
+  // if (isNewAPI) {
+  //   params = {
+  //     business_type: 'individual',
+  //     individual: {
+  //       first_name: firstName,
+  //       last_name: lastName,
+  //       address: omitBy(addressValue, isUndefined),
+  //       dob: birthDate,
+  //       ...idNumber,
+  //     },
+  //     tos_shown_and_accepted: true,
+  //   };
+  // } else {
+  //   params = {
+  //     legal_entity: {
+  //       first_name: firstName,
+  //       last_name: lastName,
+  //       address: omitBy(addressValue, isUndefined),
+  //       dob: birthDate,
+  //       type: accountType,
+  //       business_name: companyName,
+  //       business_tax_id: companyTaxId,
+  //       personal_address: personalAddressValue,
+  //       additional_owners: additionalOwnersValue,
+  //       ...idNumber,
+  //     },
+  //     tos_shown_and_accepted: true,
+  //   };
+  // }
+
+  // let accountResponse;
+
+  //////////////////////////////////
+  // testi
+  //////////////////////////////////
+
+  const { accountOpener, businessProfile, company, persons } = payoutDetails;
+  const { bankAccountToken, address, name, phone, taxId } = company;
+  const accountParams = {
+    business_type: 'company',
+    company: {
+      address: formatAddress(address),
+      name,
+      phone, // ???
+      tax_id: taxId,
+    },
+    tos_shown_and_accepted: true,
   };
 
-  let personalAddressValue;
-  if (personalAddress) {
-    personalAddressValue = {
-      city: personalAddress.city,
-      line1: personalAddress.streetAddress,
-      postal_code: personalAddress.postalCode,
-      state: hasProvince
-        ? personalAddress.province
-        : personalAddress.state
-        ? personalAddress.state
-        : '',
-    };
-  }
-
-  const additionalOwnersValue = additionalOwners
-    ? additionalOwners.map(owner => {
-        return {
-          first_name: owner.firstName,
-          last_name: owner.lastName,
-          dob: owner.birthDate,
-          address: {
-            city: owner.city,
-            line1: owner.streetAddress,
-            postal_code: owner.postalCode,
-            state: hasProvince ? owner.province : owner.state ? owner.state : '',
-          },
-        };
-      })
-    : [];
-
-  const idNumber =
-    country === 'US' ? { ssn_last_4: personalIdNumber } : { personal_id_number: personalIdNumber };
-
-  let params;
-
-  // You can check which API version you are using from Stripe Dasboard -> Developers.
-  // If you are using older version than '2019-02-19'
-  // edit 'useDeprecatedLegalEntityWithStripe' config in the stripe-config.js
-
-  const isNewAPI = !config.stripe.useDeprecatedLegalEntityWithStripe;
-
-  if (isNewAPI) {
-    params = {
-      business_type: 'individual',
-      individual: {
-        first_name: firstName,
-        last_name: lastName,
-        address: omitBy(addressValue, isUndefined),
-        dob: birthDate,
-        ...idNumber,
-      },
-      tos_shown_and_accepted: true,
-    };
-  } else {
-    params = {
-      legal_entity: {
-        first_name: firstName,
-        last_name: lastName,
-        address: omitBy(addressValue, isUndefined),
-        dob: birthDate,
-        type: accountType,
-        business_name: companyName,
-        business_tax_id: companyTaxId,
-        personal_address: personalAddressValue,
-        additional_owners: additionalOwnersValue,
-        ...idNumber,
-      },
-      tos_shown_and_accepted: true,
-    };
-  }
-
-  let accountResponse;
+  debugger;
 
   return stripe
-    .createToken('account', params)
+    .createToken('account', accountParams)
     .then(response => {
       const accountToken = response.token.id;
-      return sdk.currentUser.createStripeAccount({ accountToken, bankAccountToken, country });
-    })
-    .then(response => {
-      accountResponse = response;
-      return dispatch(fetchCurrentUser());
-    })
-    .then(() => {
-      dispatch(stripeAccountCreateSuccess(accountResponse));
+      console.log('accountToken', accountToken);
+      console.table(response.token);
+      debugger;
+
+      // const accountOpenerTokenCall = stripe
+      //   .createToken('person', accountOpenerParams)
+      //   .then(response => {
+      //     const accountOpenerToken = response.token.id;
+      //     console.table('accountOpener - personToken', response);
+      //   })
+      //   .catch(err => {
+      //     debugger;
+      //     console.error(err);
+      //   });
+
+      // const personTokenCall = stripe
+      //   .createToken('person', personParams)
+      //   .then(response => {
+      //     const accountOpenerToken = response.token.id;
+      //     console.table('accountOpener - personToken', response);
+      //   })
+      //   .catch(err => {
+      //     debugger;
+      //     console.error(err);
+      //   });
+
+
     })
     .catch(err => {
+      debugger;
       const e = storableError(err);
       dispatch(stripeAccountCreateError(e));
       const stripeMessage =
@@ -513,6 +564,31 @@ export const createStripeAccount = payoutDetails => (dispatch, getState, sdk) =>
       log.error(err, 'create-stripe-account-failed', { stripeMessage });
       throw e;
     });
+
+  //return Promise.reject(new Error('test fail'));
+  // return stripe
+  //   .createToken('account', params)
+  //   .then(response => {
+  //     const accountToken = response.token.id;
+  //     return sdk.currentUser.createStripeAccount({ accountToken, bankAccountToken, country });
+  //   })
+  //   .then(response => {
+  //     accountResponse = response;
+  //     return dispatch(fetchCurrentUser());
+  //   })
+  //   .then(() => {
+  //     dispatch(stripeAccountCreateSuccess(accountResponse));
+  //   })
+  //   .catch(err => {
+  //     const e = storableError(err);
+  //     dispatch(stripeAccountCreateError(e));
+  //     const stripeMessage =
+  //       e.apiErrors && e.apiErrors.length > 0 && e.apiErrors[0].meta
+  //         ? e.apiErrors[0].meta.stripeMessage
+  //         : null;
+  //     log.error(err, 'create-stripe-account-failed', { stripeMessage });
+  //     throw e;
+  //   });
 };
 
 export const sendVerificationEmail = () => (dispatch, getState, sdk) => {

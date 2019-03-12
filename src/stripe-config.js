@@ -12,7 +12,7 @@ export const stripePublishableKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
 // See Stripe API changelog: https://stripe.com/docs/upgrades#api-changelog
 // NOTE: we are not supporting company accounts with new Stripe API yet!
 // The option for company accounts will be hidden if this value is set to 'false'
-export const useDeprecatedLegalEntityWithStripe = false;
+export const useDeprecatedLegalEntityWithStripe = true;
 
 // Stripe only supports payments in certain countries, see full list
 // at https://stripe.com/global
@@ -47,7 +47,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -64,7 +64,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -97,7 +97,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -114,7 +114,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -131,7 +131,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -148,7 +148,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -164,9 +164,12 @@ export const stripeSupportedCountries = [
       branchCode: true,
       accountNumber: true,
     },
-    personalIdNumberRequired: true,
-    companyConfig: {
+   companyConfig: {
       personalAddress: true,
+      personalIdNumberRequired: true,
+    },
+    individualConfig: {
+      personalIdNumberRequired: true,
     },
   },
   {
@@ -183,7 +186,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -200,7 +203,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -217,7 +220,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -234,7 +237,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -264,7 +267,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -281,7 +284,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -298,7 +301,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -315,7 +318,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -332,7 +335,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -350,7 +353,7 @@ export const stripeSupportedCountries = [
     },
     companyConfig: {
       personalAddress: true,
-      additionalOwners: true,
+      owners: true,
     },
   },
   {
@@ -367,6 +370,19 @@ export const stripeSupportedCountries = [
       routingNumber: true,
       accountNumber: true,
     },
-    ssnLast4Required: true,
+    companyConfig: {
+      businessURL: true,
+      companyPhone: true,
+      mccForUS: true,
+      personPhone: true,
+      personEmail: true,
+      ssnLast4Required: true,
+      owners: true,
+    },
+    individualConfig: {
+      businessURL: true,
+      mccForUS: true,
+      ssnLast4Required: true,
+    },
   },
 ];

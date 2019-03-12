@@ -65,6 +65,21 @@
   width: calc(50% - 9px);
 }
 
+.ownershipPercentage {
+  position: relative;
+  max-width: 90px;
+  padding-right: 24px;
+  margin-bottom: 24px;
+  white-space: nowrap;
+
+  &:after {
+    content: '%';
+    position: absolute;
+    top: 36px;
+    right: 6px;
+  }
+}
+
 .selectCountry {
   margin-bottom: 24px;
 }
@@ -79,8 +94,9 @@
   width: calc(60% - 9px);
 }
 
-.taxId {
-  margin-top: 24px;
+.selectMCC,
+.textInputRow {
+  margin-bottom: 24px;
 }
 
 .error {
@@ -134,8 +150,90 @@
 
 .closeIcon {
   @apply --marketplaceModalCloseIcon;
+  margin-right: 5px;
 }
 
+.addIcon {
+  margin-right: 7px;
+  display: inline-block;
+  height: 18px;
+  padding-top: 1px;
+}
+
+.roleField {
+  border: 0;
+  padding: 0;
+  margin-bottom: 24px;
+}
+
+.missingStripeKey {
+  color: var(--failColor);
+}
+
+/* Company account opener */
+.accountOpenerWrapper {
+  margin-bottom: 35px;
+
+  @media (--viewportMedium) {
+    margin-bottom: 56px;
+  }
+}
+.accountOpenerInputsWrapper .sectionContainer {
+  margin-bottom: 24px;
+}
+
+.accountOpenerInfo {
+  @apply --marketplaceH5FontStyles;
+  color: var(--matterColorAnti);
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 5px;
+  padding-bottom: 1px;
+
+  @media (--viewportMedium) {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 6px;
+    padding-bottom: 2px;
+  }
+}
+
+/* Company owners and directors */
+.additionalPersonsWrapper {
+  margin-bottom: 35px;
+
+  @media (--viewportMedium) {
+    margin-bottom: 56px;
+  }
+}
+.additionalPersonWrapper .sectionContainer {
+  margin-bottom: 24px;
+}
+
+.additionalPersonLabel {
+  display: inline-block;
+}
+
+.additionalPersonInfo {
+  @apply --marketplaceH5FontStyles;
+  color: var(--matterColorAnti);
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 5px;
+  padding-bottom: 1px;
+
+  @media (--viewportMedium) {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 6px;
+    padding-bottom: 2px;
+  }
+}
+
+/**
+ * Deprecated
+ * (for EU legistlation in pre 2019-02-19 Stripe API versions)
+ */
 .additionalOwnerWrapper {
   margin-bottom: 35px;
 
@@ -152,17 +250,6 @@
   display: inline-block;
 }
 
-.closeIcon {
-  margin-right: 5px;
-}
-
-.addIcon {
-  margin-right: 7px;
-  display: inline-block;
-  height: 18px;
-  padding-top: 1px;
-}
-
 .additionalOwnerInfo {
   @apply --marketplaceH5FontStyles;
   color: var(--matterColorAnti);
@@ -177,8 +264,4 @@
     padding-top: 6px;
     padding-bottom: 2px;
   }
-}
-
-.missingStripeKey {
-  color: var(--failColor);
 }

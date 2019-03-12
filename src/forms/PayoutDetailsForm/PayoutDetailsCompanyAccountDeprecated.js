@@ -89,6 +89,9 @@ const PayoutDetailsFormCompanyComponent = ({ fieldRenderProps }) => {
       <FormattedMessage id="PayoutDetailsForm.additionalOwnersInfoLink" />
     </ExternalLink>
   );
+  const additionalOwnersTitle = intl.formatMessage({
+    id: 'PayoutDetailsForm.personalDetailsAdditionalOwnerTitle',
+  });
 
   return (
     <React.Fragment>
@@ -139,6 +142,7 @@ const PayoutDetailsFormCompanyComponent = ({ fieldRenderProps }) => {
             values={values}
             country={country}
             fieldId="company"
+            accountType="company"
           />
 
           {showPersonalAddressField ? (
@@ -174,6 +178,8 @@ const PayoutDetailsFormCompanyComponent = ({ fieldRenderProps }) => {
                         values={values}
                         country={country}
                         fieldId={`company.additionalOwners.${index}`}
+                        accountType="company"
+                        sectionTitle={additionalOwnersTitle}
                       />
                       {showPersonalAddressField ? (
                         <PayoutDetailsAddress
