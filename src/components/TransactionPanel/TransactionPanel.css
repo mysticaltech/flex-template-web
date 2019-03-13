@@ -4,6 +4,17 @@
   position: relative;
 }
 
+.invalidPriceMessage {
+  color: var(--failColor);
+
+  margin: 16px 24px 0 24px;
+
+  @media (--viewportLarge) {
+    margin: 0 48px 32px 48px;
+    padding: 5px 0 0 0;
+  }
+}
+
 .container {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,10 @@
 {
 
+  "BookingBreakdown.invalidPrice": "The booking price does not match the listing. Please, check that the prices are correct!",
+
+
+
+
   "BookingDatesForm.cleaningFee": "Cleaning fee",
   "BookingBreakdown.cleaningFee": "Cleaning fee",
 

@@ -41,6 +41,8 @@ import PanelHeading, {
 
 import css from './TransactionPanel.css';
 
+import InvalidPriceMessageMaybe from './InvalidPriceMessageMaybe';
+
 // Helper function to get display names for different roles
 const displayNames = (currentUser, currentProvider, currentCustomer, intl) => {
   const authorDisplayName = <UserDisplayName user={currentProvider} intl={intl} />;
@@ -334,6 +336,12 @@ export class TransactionPanelComponent extends Component {
                 showAddress={stateData.showAddress}
               />
               <BreakdownMaybe transaction={currentTransaction} transactionRole={transactionRole} />
+              <InvalidPriceMessageMaybe
+                transaction={currentTransaction}
+                listing={currentListing}
+                transactionRole={transactionRole}
+                intl={intl}
+              />
             </div>
 
             <FeedSection
@@ -406,6 +414,13 @@ export class TransactionPanelComponent extends Component {
                 className={css.breakdownContainer}
                 transaction={currentTransaction}
                 transactionRole={transactionRole}
+              />
+
+              <InvalidPriceMessageMaybe
+                transaction={currentTransaction}
+                listing={currentListing}
+                transactionRole={transactionRole}
+                intl={intl}
               />
 
               {stateData.showSaleButtons ? (
